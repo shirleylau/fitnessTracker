@@ -1,14 +1,16 @@
-(function() {
+$(function() {
 
-    var React = require('react');
-    var ReactDOM = require('react-dom');
+    // var React = require('react');
+    // var ReactDOM = require('react-dom');
+    //
+    // var Page = React.createClass({
+    //     displayName: 'Page',
+    //     render: function() {
+    //         // return (<h2>This is react</h2>)
+    //     }
+    // });
 
-    var Page = React.createClass({
-        displayName: 'Page',
-        render: function() {
-            // return (<h2>This is react</h2>)
-        }
-    });
+    console.log('this is appJs');
 
     $('#btnSignUp').click(function() {
 

@@ -16,10 +16,12 @@ cursor = conn.cursor()
 
 @app.route('/')
 def main():
+    print('toMain')
     return render_template('index.html')
 
 @app.route('/showSignUp')
 def showSignUp():
+    print('toSignUp')
     return render_template('signUp.html')
 
 @app.route('/signUp', methods = ['POST'])
@@ -33,7 +35,7 @@ def signUp():
     if _name and _email and _password:
         print'HII'
         _hashed_password = generate_password_hash(_password)
-        cursor.callproc('sp_createUser', (_name, _email, _hashed_password))
+        cursor.callproc('sp_createUser', (_name, _email, '_hashed_password'))
         data = cursor.fetchall()
 
         if len(data) is 0:
