@@ -33,13 +33,14 @@ def signUp():
 
     # Validate values
     if _name and _email and _password:
-        print'HII'
+        # print'HII'
         _hashed_password = generate_password_hash(_password)
         cursor.callproc('sp_createUser', (_name, _email, '_hashed_password'))
         data = cursor.fetchall()
 
         if len(data) is 0:
             conn.commit()
+            # print(_hashed_password)
             return json.dumps({'message':'User created successfully !'})
         else:
             return json.dumps({'error':str(data[0])})

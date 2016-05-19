@@ -10,8 +10,6 @@ $(function() {
     //     }
     // });
 
-    console.log('this is appJs');
-
     $('#btnSignUp').click(function() {
 
         $.ajax({
