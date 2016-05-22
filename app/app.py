@@ -1,18 +1,9 @@
 from flask import Flask, render_template, request, json
 from flask.ext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
+import db
 
 app = Flask(__name__)
-
-mysql = MySQL()
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'pa55word'
-app.config['MYSQL_DATABASE_DB'] = 'BucketList'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(app)
-
-conn = mysql.connect()
-cursor = conn.cursor()
 
 @app.route('/')
 def main():
@@ -24,31 +15,38 @@ def showSignUp():
     print('toSignUp')
     return render_template('signUp.html')
 
-@app.route('/signUp', methods = ['POST'])
+@app.route('/v1/signUp', methods=['POST'])
 def signUp():
     # Reads posted vals from UI
-    _name = request.form['inputName']
-    _email = request.form['inputEmail']
-    _password = request.form['inputPassword']
+    first_name = request.form['signUp_firstName']
+    last_name = request.form['signUp_lastName'] or None
+    username = request.form['signUp_username']
+    password = request.form['signUp_password']
 
     # Validate values
-    if _name and _email and _password:
-        # print'HII'
-        _hashed_password = generate_password_hash(_password)
-        cursor.callproc('sp_createUser', (_name, _email, '_hashed_password'))
-        data = cursor.fetchall()
-
-        if len(data) is 0:
-            conn.commit()
-            # print(_hashed_password)
-            return json.dumps({'message':'User created successfully !'})
-        else:
-            return json.dumps({'error':str(data[0])})
-
+    if first_name and username and password:
+        hashed_password = generate_password_hash(password)
+        db.create_user(first_name, last_name, username, hashed_password)
         return json.dumps({'html':'<span>All fields good !!</span>'})
     else:
         return json.dumps({'html':'<span>Enter the required fields</span>'})
 
+@app.route('/v1/user', methods=['DELETE'])
+def deleteUser():
+    # id = request.form['id']
+    username = request.form['username']
+    password = request.form['password']
+    # Secure enough?
+
+    if username and password:
+        user = db.find_user_by_username(username)
+        if check_password_hash(user.password, password):
+            print('Yepp they match')
+            db.delete_user(username)
+            return json.dumps({'deleted': 'ok'})
+
+    return json.dumps({'error': 'missing user or password'}), 400
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    db.init()
+    app.run(debug=True)
