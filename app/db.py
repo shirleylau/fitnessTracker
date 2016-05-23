@@ -53,7 +53,7 @@ def find_user_by_username(username):
     return session.query(User).filter(User.username == username).one()
 
 
-def find_user_by_id(id):    
+def find_user_by_id(id):
     return session.query(User).filter(User.id == id).one()
 
 
